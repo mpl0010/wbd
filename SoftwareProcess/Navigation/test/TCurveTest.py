@@ -230,3 +230,49 @@ class TCurveTest(unittest.TestCase):
         myT = T.TCurve(self.nominalN)
         self.assertAlmostEquals(myT.f(1, 5), 0.578703704)
         
+# 500 integrate
+# Analysis
+#    inputs
+#        t -> float .GT. 0 mandatory validated
+#        n -> integer .GE. 3 mandatory validated
+#        f -> function f(u, n)
+#    outputs
+#        float .GE. 0
+# Happy path
+#    nominal case:   integrate(1.1342, 1, f) -> .8481
+# Sad path
+#    none ... will prevalidate
+#
+
+    def test500_010_ShouldCalculateIntegration(self):
+        myT = T.TCurve(6)
+        self.assertAlmostEquals(myT.integrate(1.1342, 1, myT.f), .8481, 3)
+        
+    def test500_020_ShouldCalculateIntegration(self):
+        myT = T.TCurve(6)
+        self.assertAlmostEquals(myT.integrate(1.1342, 2, myT.f), .88479, 4)    
+    
+    def test500_030_ShouldCalculateIntegrationWithAdjustedF(self):
+        def adjustedf(u, n):
+            return u
+        myT = T.TCurve(6)
+        self.assertAlmostEquals(myT.integrate(1.0, 2, adjustedf), .5, 1)
+        
+    def test500_040_ShouldCalculateIntegrationWithAdjustedF(self):
+        def adjustedf(u, n):
+            return u ** 2
+        myT = T.TCurve(6)
+        self.assertAlmostEquals(myT.integrate(1.0, 2, adjustedf), .333, 2)
+    
+    def test500_050_ShouldCalculateIntegrationWithAdjustedF(self):
+        def adjustedf(u, n):
+            return u ** 6
+        myT = T.TCurve(6)
+        self.assertAlmostEquals(myT.integrate(1.0, 2, adjustedf), .1428, 3)
+    
+    def test500_060_ShouldCalculateIntegrationWithAdjustedF(self):
+        def adjustedf(u, n):
+            return u ** 100
+        myT = T.TCurve(6)
+        self.assertAlmostEquals(myT.integrate(1.0, 2, adjustedf), .009900, 5)
+        
