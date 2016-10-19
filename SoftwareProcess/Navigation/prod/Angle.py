@@ -10,73 +10,86 @@ class Angle():
         #self.angle = ...       set to 0 degrees 0 minutes
         #creates an instance of Angle.
         self.angle = 0.0
-        pass
     
-    def setDegrees(self, degrees):
+    def setDegrees(self, degrees = 0):
         #returns the resulting angle as degrees
-        if(isinstance(degrees, float)):
-            self.angle = self.angle + (degrees % 360)
+        try:
+            self.angle = self.angle + (float(degrees) % 360)
             return self.angle
-        elif(isinstance(degrees, int)):
-            self.angle = self.angle + (degrees % 360)
-            return self.angle
-        else:
-            raise ValueError("Angle.setDegrees: The value needs to be an instance of a float.")
-        pass
+        except:
+            raise ValueError("Angle.setDegrees: degrees violates the parameter specifications")
     
     def setDegreesAndMinutes(self, degrees):
         if(isinstance(degrees, basestring)):
-            index = degrees.index("d")
-            firstHalf = degrees[0:index]
-            secondHalf = degrees[index + 1: len(degrees)]
-            try:
-                invalidAngle1 = int(firstHalf)
-                invalidAngle2 = float(secondHalf)
-            except ValueError:
-                #handle exception
-                print "The value must resemble this structure (degree)d(Minutes)"
-        
-            minuteConvert = float(secondHalf) / 60.0
-            #Correcting the degree if greater than 360 or less than 0
-            tempFirstHalf = int(firstHalf) % 360
-            self.angle = round(tempFirstHalf + minuteConvert, 1)
-            return self.angle
+            strDelimiter = degrees.find("d")
+            strDecimalLength = degrees.find(".")
+            firstHalf = degrees[0:strDelimiter]
+            secondHalf = degrees[strDelimiter + 1: len(degrees)]
+            decimalPlacesAmount = degrees[strDecimalLength + 1: len(degrees)]
+            if(strDelimiter == -1):
+                raise ValueError("Angle.setDegreesAndMinutes: The value must resemble this structure (degree)d(Minutes)")
+            elif((strDecimalLength != -1) & (len(decimalPlacesAmount) != 1)):
+                raise ValueError("Angle.setDegreesAndMinutes: The Minutes value can only have one decimal place")
+            else:
+                try:
+                    if(float(secondHalf) < 0.0):
+                        raise ValueError("Angle.setDegreesAndMinutes: The Minute value must be positive")
+                    else:
+                        tempFirstHalf = int(firstHalf) % 360
+                        minuteConvert = float(secondHalf) / 60.0
+                        self.angle = tempFirstHalf + minuteConvert
+                        return self.angle
             
+                except:
+                #handle exception
+                    raise ValueError("Angle.setDegreesAndMinutes: The value must resemble this structure (degree)d(Minutes)")
+                    
+            #Correcting the degree if greater than 360 or less than 0
         else:
             raise ValueError("Angle.setDegreesAndMinutes: The value needs to be an instance of a string.")
-        pass
     
-    def add(self, angle):
-        #Adds two angles
-        result = round((self.angle + angle.angle) % 360, 1)
-        return result
-        pass
-    
-    def subtract(self, angle):
-        #Subtract two angles
-        result = round((self.angle - angle.angle) % 360, 1)
-        return result
-        pass
-    
-    def compare(self, angle):
-        #Compare two angles
-        if(self.angle > angle.angle):
-            return 1
-        elif(self.angle < angle.angle):
-            return -1
+    def add(self, angle = None):
+        if(angle == None):
+            raise ValueError("Angle.add: An angle value must be passed in")
+        elif(isinstance(angle, Angle)):
+            self.angle = (self.angle + angle.angle) % 360
+            return self.angle
         else:
-            return 0
-        pass
+            raise ValueError("Angle.add: An angle value must be passed in")
+
+    def subtract(self, angle = None):
+        #Subtract two angles
+        if(angle == None):
+            raise ValueError("Angle.subtract: An angle value must be passed in")
+        elif(isinstance(angle, Angle)):
+            self.angle = (self.angle - angle.angle) % 360
+            return self.angle
+        else:
+            raise ValueError("Angle.subtract: An angle value must be passed in")
+    
+    def compare(self, angle = None):
+        #Compare two angles
+        if(angle == None):
+            raise ValueError("Angle.compare: angle is not a valid instance of Angle")
+        elif(isinstance(angle, Angle)):
+            if(self.angle > angle.angle):
+                return 1
+            elif(self.angle < angle.angle):
+                return -1
+            else:
+                return 0
+        else:
+            raise ValueError("Angle.compare: angle is not a valid instance of Angle")
     
     def getString(self):
-        stringAngle = str(self.angle)
-        degree = stringAngle[0:stringAngle.index(".")]
-        minutes = stringAngle[stringAngle.index(".") + 1: len(stringAngle)]
-        minutesConverted = round(float(minutes) * 60.0, 1)
-        return degree + "d" + str(minutesConverted)
-        pass
+        strAngle = str(self.angle)
+        degree = strAngle[0:strAngle.find(".")]
+        degreeConverted = int(degree) % 360
+        minutes = strAngle[strAngle.find(".") + 1: len(strAngle)]
+        print minutes
+        minutesConverted = float(minutes) * 6
+        return str(degreeConverted) + "d" + str(minutesConverted)
     
     def getDegrees(self):
         #Returns the angle
-        return self.angle
-        pass
+        return self.angle 
