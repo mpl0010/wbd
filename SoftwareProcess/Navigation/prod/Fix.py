@@ -335,13 +335,10 @@ class Fix():
         if (checkForLatN == -1):
             if (checkForLatS == -1):
                 assumedLatitude = "0d0.0"
-                print assumedLatitude
             else:
                 assumedLatitude = "-" + assumedLatitude[1:]
-                print assumedLatitude
         else:
             assumedLatitude = assumedLatitude[1:]
-            print assumedLatitude
             
         
         self.errorCount = 0
